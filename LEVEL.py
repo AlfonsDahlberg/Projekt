@@ -2,7 +2,7 @@ import pygame
 from inställningar import *
 from tile import Tile
 from player import Player
-
+screen = (1280, 720)
 class Level:
     def __init__(self):
         #nivå setup
@@ -23,6 +23,8 @@ class Level:
                     Tile((x,y), [self.visible_sprites,self.collision_sprites])
                 if col == 'P':
                     self.player = Player((x, y), [self.visible_sprites, self.active_sprites], self.collision_sprites)
+
+
 
     def run(self):
         #kör spelet(leveln)
@@ -73,3 +75,5 @@ class CameraGroup(pygame.sprite.Group):
         for sprite in self.sprites():
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image,offset_pos)
+
+    

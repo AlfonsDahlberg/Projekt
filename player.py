@@ -1,19 +1,34 @@
 import pygame
 from inställningar import *
+from support import import_folder
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self,pos,groups,collision_sprites):
 		super().__init__(groups)
+		self.animations = None
+		self.import_character_assets()
+		self.frame_index = 0
+		self.animation_speed = 0.15
 		self.image = pygame.Surface((TILE_SIZE // 2,TILE_SIZE))
-		self.image = PLAYER_COLOR
+		self.image = PLAYER_COLOR #animations['idle'][self.frame_index]
 		self.rect = self.image.get_rect(topleft = pos)
-		#spelarens rörelse
+		#spelarens rörelse/hastighet
 		self.direction = pygame.math.Vector2()
 		self.speed = 8
 		self.gravity = 0.8
 		self.jump_speed = 16
 		self.collision_sprites = collision_sprites
 		self.on_floor = False
+
+	def import_character_assets(self):
+		#filsökväg för animationer
+		character_path = '../graphics/character'
+		self.animations = {'idle':[],'run':[],'jump':[],'fall':[]}
+
+		for animation in self.animations.keys():
+			full_path = character_path + '/' + animation + '/'
+			self.animations[animation] = import_folder(full_path)
+
 
 	def input(self):
 		keys = pygame.key.get_pressed()

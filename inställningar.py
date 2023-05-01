@@ -2,13 +2,13 @@ import pygame
 LEVEL_MAP = [
 '                            ',
 '                            ',
-'                            ',
+'       o              o     ',
 '       XXXX           XX    ',
-'   P                        ',
+'   P         o              ',
 'XXXXX         XX         XX ',
-' XXXX       XX              ',
+' XXXX       XX       o      ',
 ' XX    X  XXXX    XX  XX    ',
-'       X  XXXX    XX  XXX   ',
+'   o   X  XXXX    XX  XXX   ',
 '    XXXX  XXXXXX  XX  XXXX  ',
 'XXXXXXXX  XXXXXX  XX  XXXX  ']
 
@@ -20,6 +20,7 @@ SCREEN_HEIGHT = 720
 BG_COLOR = pygame.image.load("bgpic.png")
 PLAYER_COLOR = pygame.image.load("spelaren.png")
 TILE_COLOR = pygame.image.load("bricktile.png")
+coin = pygame.image.load("coinn.png")
 
 # camera
 CAMERA_BORDERS = {

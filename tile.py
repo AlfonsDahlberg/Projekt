@@ -7,3 +7,5 @@ class Tile(pygame.sprite.Sprite):
 		self.image = pygame.Surface((TILE_SIZE,TILE_SIZE))
 		self.image = TILE_COLOR
 		self.rect = self.image.get_rect(topleft = pos)
+
+
