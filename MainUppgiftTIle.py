@@ -4,6 +4,8 @@ from inställningar import *
 from LEVEL import Level
 from button import Button
 
+replay = True
+
 #pygame setup
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
@@ -13,21 +15,28 @@ SCREEN = pygame.display.set_mode((1280, 720))
 
 LEVEL = Level()
 
-BG = pygame.image.load("meny.png")
+BG = pygame.image.load("MAINMENY.jpg")
 
 def get_font(size): #retunerar font i önskad storlek.
     return pygame.font.Font("font.ttf", size)
 
 def play(): # Spel skärmen
     #loop för händelser i spelet.
+
     while True:
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
-
         screen.blit(BG_COLOR, (0, 0))
         LEVEL.run()
 
+        if LEVEL.isPlayerInGoal() == True:
+            victoryScreen()
+
+        if LEVEL.isPlayerDead():
+            deathScreen()
+
+
         PLAY_BACK = Button(image=None, pos=(1000, 100),
-                           text_input="BACK", font=get_font(75), base_color="White", hovering_color="Green")
+                           text_input="BACK", font=get_font(75), base_color="White", hovering_color="Green") # Väljer färger och storlek för Knapp texten
 
         PLAY_BACK.changeColor(PLAY_MOUSE_POS)
         PLAY_BACK.update(SCREEN)
@@ -41,6 +50,66 @@ def play(): # Spel skärmen
                     main_menu()
 
         pygame.display.update()
+
+def deathScreen(): # En skärm som kommer upp när man dör med knappar "back" och "retry"
+    while True:
+
+        DS_MOUSE_POS = pygame.mouse.get_pos()
+        #ställer in knapparna
+        SCREEN.blit(BG_COLOR, (0, 0))
+        DS_TEXT = get_font(100).render("YOU DIED!", True, "#000000")
+        DS_RECT = DS_TEXT.get_rect(center=(640, 100))
+        BACK_BUTTON = Button(image=pygame.image.load("Quit Rect.png"), pos=(640, 550),
+                             text_input="BACK", font=get_font(60), base_color="#d7fcd4", hovering_color="Pink")
+        RETRY_BUTTON = Button(image=pygame.image.load("Play Rect.png"), pos=(640, 250),
+                             text_input="RETRY!", font=get_font(60), base_color="#d7fcd4", hovering_color="Pink")
+        SCREEN.blit(DS_TEXT, DS_RECT)
+
+        for button in [RETRY_BUTTON, BACK_BUTTON]:
+            button.changeColor(DS_MOUSE_POS)
+            button.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if RETRY_BUTTON.checkForInput(DS_MOUSE_POS):
+                    LEVEL.reset_level()
+                    play()
+                if BACK_BUTTON.checkForInput(DS_MOUSE_POS):
+                    main_menu()
+        # ritar logic
+        pygame.display.update()
+        clock.tick(60)
+
+def victoryScreen(): # En skärm som kommer upp när man dör med knappar "back" och "retry"
+    while True:
+
+        DS_MOUSE_POS = pygame.mouse.get_pos()
+        #ställer in knapparna
+        SCREEN.blit(BG_COLOR, (0, 0))
+        DS_TEXT = get_font(100).render("Victory!", True, "#000000")
+        DS_RECT = DS_TEXT.get_rect(center=(640, 100))
+        BACK_BUTTON = Button(image=pygame.image.load("Quit Rect.png"), pos=(640, 550),
+                             text_input="BACK", font=get_font(60), base_color="#d7fcd4", hovering_color="Pink")
+        SCREEN.blit(DS_TEXT, DS_RECT)
+
+        for button in [BACK_BUTTON]:
+            button.changeColor(DS_MOUSE_POS)
+            button.update(SCREEN)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if BACK_BUTTON.checkForInput(DS_MOUSE_POS):
+                    main_menu()
+        # ritar logic
+        pygame.display.update()
+        clock.tick(60)
+
 
 
 def options(): # Skrämen för eventuella inställningar
@@ -100,6 +169,7 @@ def main_menu(): # Meny skärmen
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    LEVEL.reset_level()
                     play()
                 if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                     options()
@@ -112,3 +182,4 @@ def main_menu(): # Meny skärmen
             clock.tick(60)
 
 main_menu()
+

@@ -1,10 +1,13 @@
 import pygame
 from inställningar import *
 from support import import_folder
+from tile import Goal
+
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self,pos,groups,collision_sprites):
 		super().__init__(groups)
+		self.touchedGoal = False
 		self.animations = None
 		self.import_character_assets()
 		self.frame_index = 0
@@ -45,6 +48,9 @@ class Player(pygame.sprite.Sprite):
 
 	def horizontal_collisions(self):
 		for sprite in self.collision_sprites.sprites():
+			if type(sprite) is Goal:
+				if sprite.rect.colliderect(self.rect):
+					self.touchedGoal = True
 			if sprite.rect.colliderect(self.rect):
 				if self.direction.x < 0:
 					self.rect.left = sprite.rect.right
@@ -53,6 +59,9 @@ class Player(pygame.sprite.Sprite):
 
 	def vertical_collisions(self):
 		for sprite in self.collision_sprites.sprites():
+			if type(sprite) is Goal:
+				if sprite.rect.colliderect(self.rect):
+					self.touchedGoal = True
 			if sprite.rect.colliderect(self.rect):
 				if self.direction.y > 0:
 					self.rect.bottom = sprite.rect.top
@@ -74,4 +83,5 @@ class Player(pygame.sprite.Sprite):
 		self.horizontal_collisions()
 		self.apply_gravity()
 		self.vertical_collisions()
+
 

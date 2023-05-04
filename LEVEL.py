@@ -1,8 +1,9 @@
 import pygame
 from inställningar import *
-from tile import Tile
+from tile import Tile, Goal
 from player import Player
 screen = (1280, 720)
+
 class Level:
     def __init__(self):
         #nivå setup
@@ -23,13 +24,24 @@ class Level:
                     Tile((x,y), [self.visible_sprites,self.collision_sprites])
                 if col == 'P':
                     self.player = Player((x, y), [self.visible_sprites, self.active_sprites], self.collision_sprites)
+                if col == 'G':
+                    Goal((x,y), [self.visible_sprites,self.collision_sprites])
 
-
+    def reset_level(self):
+        # rensa sprite-grupperna och skapa nya instanser av spelaren och plattformar
+        self.__init__()
 
     def run(self):
         #kör spelet(leveln)
         self.active_sprites.update()
         self.visible_sprites.costum_draw(self.player)
+
+    def isPlayerDead(self):
+        return self.player.rect.bottom > 1000
+
+    def isPlayerInGoal(self):
+        return self.player.touchedGoal
+
 
 class CameraGroup(pygame.sprite.Group):
     def __init__(self):
