@@ -3,12 +3,12 @@ import pygame, sys
 from inställningar import *
 from LEVEL import Level
 from button import Button
+from tile import Score
 
 replay = True
 
 #pygame setup
 pygame.init()
-screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 pygame.display.set_caption("PythonSpel")
 SCREEN = pygame.display.set_mode((1280, 720))
@@ -24,20 +24,22 @@ def play(): # Spel skärmen
     #loop för händelser i spelet.
 
     while True:
-        PLAY_MOUSE_POS = pygame.mouse.get_pos()
-        screen.blit(BG_COLOR, (0, 0))
-        LEVEL.run()
+        PLAY_MOUSE_POS = pygame.mouse.get_pos() #får mus positionen.
+        SCREEN.blit(BG_COLOR, (0, 0)) #ritar bakrunden
+        LEVEL.run()#updaterar alla sprites
 
-        if LEVEL.isPlayerInGoal() == True:
+        if LEVEL.isPlayerInGoal():
             victoryScreen()
 
         if LEVEL.isPlayerDead():
             deathScreen()
 
+        SCORE = Score(pos=(100, 100), text_input=str(LEVEL.noOfCoinsPickedUp()), font=get_font(75))
+        SCORE.update(SCREEN)
 
+        #Knapp för att lämna spelet
         PLAY_BACK = Button(image=None, pos=(1000, 100),
                            text_input="BACK", font=get_font(75), base_color="White", hovering_color="Green") # Väljer färger och storlek för Knapp texten
-
         PLAY_BACK.changeColor(PLAY_MOUSE_POS)
         PLAY_BACK.update(SCREEN)
 

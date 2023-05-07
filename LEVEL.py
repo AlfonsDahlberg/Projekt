@@ -1,6 +1,6 @@
 import pygame
 from inställningar import *
-from tile import Tile, Goal
+from tile import Tile, Goal, Coin, Score, TileGrass
 from player import Player
 screen = (1280, 720)
 
@@ -13,8 +13,8 @@ class Level:
         self.visible_sprites = CameraGroup()
         self.active_sprites = pygame.sprite.Group()
 
-
         self.setup_LEVEL()
+
     def setup_LEVEL(self):
         for row_index,row in enumerate(LEVEL_MAP):
             for col_index,col in enumerate(row):
@@ -26,6 +26,11 @@ class Level:
                     self.player = Player((x, y), [self.visible_sprites, self.active_sprites], self.collision_sprites)
                 if col == 'G':
                     Goal((x,y), [self.visible_sprites,self.collision_sprites])
+                if col == 'o':
+                    Coin((x,y), [self.visible_sprites,self.collision_sprites])
+                if col == 'g':
+                    TileGrass((x,y), [self.visible_sprites,self.collision_sprites])
+
 
     def reset_level(self):
         # rensa sprite-grupperna och skapa nya instanser av spelaren och plattformar
@@ -42,16 +47,15 @@ class Level:
     def isPlayerInGoal(self):
         return self.player.touchedGoal
 
+    def noOfCoinsPickedUp(self):
+        return self.player.noOfCollectedCoins
 
-class CameraGroup(pygame.sprite.Group):
+
+class CameraGroup(pygame.sprite.Group): #klass för kameran som följer spelaren.
     def __init__(self):
         super().__init__()
         self.display_surface = pygame.display.get_surface()
         self.offset = pygame.math.Vector2(100,300)
-
-        #centrerad kamera
-        #self.half_w = self.display_surface.get_size()[0] // 2
-        #self.half_h = self.display_surface.get_size()[1] // 2
 
         #camera inte centrerad
         cam_left = CAMERA_BORDERS["left"]
@@ -62,11 +66,6 @@ class CameraGroup(pygame.sprite.Group):
         self.camera_rect = pygame.Rect(cam_left,cam_top,cam_width,cam_height)
 
     def costum_draw(self,player):
-
-        #få spelarens offset position
-        #self.offset.x = player.rect.centerx - self.half_w
-        #self.offset.y = player.rect.centery - self.half_h
-
         #får kamera positionen
         if player.rect.left < self.camera_rect.left:
             self.camera_rect.left = player.rect.left
@@ -77,12 +76,10 @@ class CameraGroup(pygame.sprite.Group):
         if player.rect.bottom > self.camera_rect.bottom:
             self.camera_rect.bottom = player.rect.bottom
 
-
         #camera offset
         self.offset = pygame.math.Vector2(
             self.camera_rect.left - CAMERA_BORDERS["left"],
             self.camera_rect.top - CAMERA_BORDERS["top"])
-
 
         for sprite in self.sprites():
             offset_pos = sprite.rect.topleft - self.offset
